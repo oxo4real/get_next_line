@@ -12,37 +12,14 @@
 
 #include "get_next_line_bonus.h"
 
-void	*special_free(char *buffer,  t_list **head, t_list **lst)
+void	*special_free(char *buffer, char **stash)
 {
-	t_list	*tmp;
-	t_list	*prev;
-	int		fd;
-
 	if (buffer)
 		free(buffer);
-	while (!(*head) && (*lst))
+	if (stash && (*stash))
 	{
-		free((*lst) -> stash);
-		tmp = (*lst);
-		(*lst) = (*lst) -> next;
-		free(tmp);
-	}
-	if ((*head) && (*lst))
-	{
-		fd = ((*head) -> fd);
-		(*head) = (*lst);
-		prev = (*lst);
-		while ((*head) && ((*head) -> fd) != fd)
-		{
-			prev = (*head);
-			(*head) = ((*head) -> next);
-		}
-		if (prev)
-			(prev -> next) = ((*head) -> next);
-		if ((*head) == (*lst))
-			(*lst) = (*lst) -> next;
-		free(((*head) -> stash));
-		free((*head));
+		free((*stash));
+		(*stash) = NULL;
 	}
 	return (NULL);
 }
@@ -113,53 +90,27 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 	return (dup_stash_till_nl(stash));
 }
 
-t_list	*new_lst_elem(int fd, t_list *next)
-{
-	t_list	*lst;
-
-	lst = (t_list *)malloc(sizeof(t_list) * 1);
-	if (!lst)
-		return (NULL);
-	lst -> fd = fd;
-	lst -> stash = malloc(sizeof(char) * 1);
-	if (!(lst -> stash))
-		return (NULL);
-	(lst -> stash)[0] = 0;
-	lst -> next = next;
-	return (lst);
-}
-
 char	*get_next_line(int fd)
 {
-	static t_list	*lst = NULL;
-	t_list			*head;
-	char			*buffer;
-	char			*line;
+	static char	*map[OPEN_MAX + 1] = {0};
+	char		*buffer;
+	char		*line;
 
+	if (BUFFER_SIZE <= 0 || fd > OPEN_MAX || fd < 0)
+		return (NULL);
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	if (!lst)
+	if (!map[fd])
 	{
-		lst = new_lst_elem(fd, NULL);
-		if (!lst)
-			return (special_free(buffer, NULL, NULL));
+		map[fd] = malloc(sizeof(char) * 1);
+		if (!map[fd])
+			return (special_free(buffer, NULL));
+		map[fd][0] = 0;
 	}
-	head = lst;
-	while (head && head -> fd != fd)
-		head = head -> next;
-	if (!head)
-	{
-		head = new_lst_elem(fd, lst);
-		if (!head)
-			return (special_free(buffer, NULL, &lst));
-		lst = head;
-	}
-	line = read_line(fd, NULL, buffer, &(head -> stash));
+	line = read_line(fd, NULL, buffer, &map[fd]);
 	if (!line)
-		return (special_free(buffer, &head, &lst));
-	if (!(head -> stash))
-		special_free(NULL, &head, &lst);
+		return (special_free(buffer, &map[fd]));
 	free(buffer);
 	return (line);
 }

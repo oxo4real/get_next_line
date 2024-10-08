@@ -4,17 +4,15 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
+# include <limits.h>
+
+#ifndef	OPEN_MAX
+# define OPEN_MAX 1024
+#endif
 
 #ifndef BUFFER_SIZE
 # define BUFFER_SIZE 1024
 #endif
-
-typedef struct	s_list
-{
-int				fd;
-char			*stash;
-struct s_list	*next;
-}				t_list;
 
 size_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *s);

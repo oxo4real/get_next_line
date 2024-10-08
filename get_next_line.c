@@ -89,8 +89,6 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 	return (dup_stash_till_nl(stash));
 }
 
-
-
 char	*get_next_line(int fd)
 {
 	static char	*stash = NULL;

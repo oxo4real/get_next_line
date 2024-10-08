@@ -12,22 +12,37 @@
 
 #include "get_next_line_bonus.h"
 
-void	*special_free(char *buffer, char **stash, t_list *lst)
+void	*special_free(char *buffer,  t_list **head, t_list **lst)
 {
 	t_list	*tmp;
+	t_list	*prev;
+	int		fd;
+
 	if (buffer)
 		free(buffer);
-	if (stash && (*stash))
+	while (!(*head) && (*lst))
 	{
-		free((*stash));
-		(*stash) = NULL;
-	}
-	while (lst)
-	{
-		free(lst -> stash);
-		tmp = lst;
-		lst = lst -> next;
+		free((*lst) -> stash);
+		tmp = (*lst);
+		(*lst) = (*lst) -> next;
 		free(tmp);
+	}
+	if ((*head) && (*lst))
+	{
+		fd = ((*head) -> fd);
+		(*head) = (*lst);
+		prev = (*lst);
+		while ((*head) && ((*head) -> fd) != fd)
+		{
+			prev = (*head);
+			(*head) = ((*head) -> next);
+		}
+		if (prev)
+			(prev -> next) = ((*head) -> next);
+		if ((*head) == (*lst))
+			(*lst) = (*lst) -> next;
+		free(((*head) -> stash));
+		free((*head));
 	}
 	return (NULL);
 }
@@ -67,7 +82,8 @@ char	*handle_eof(char **stash, char *line)
 	if (find_chr((*stash), '\n') < 0 && (*stash)[0] != 0)
 	{
 		line = ft_strdup((*stash));
-		special_free(NULL, stash, NULL);
+		free((*stash));
+		(*stash) = NULL;
 	}
 	else if ((*stash)[0] != 0)
 		line = dup_stash_till_nl(stash);
@@ -136,12 +152,14 @@ char	*get_next_line(int fd)
 	{
 		head = new_lst_elem(fd, lst);
 		if (!head)
-			return (special_free(buffer, NULL, lst));
+			return (special_free(buffer, NULL, &lst));
 		lst = head;
 	}
 	line = read_line(fd, NULL, buffer, &(head -> stash));
 	if (!line)
-		return (special_free(buffer, &(head -> stash), NULL));
+		return (special_free(buffer, &head, &lst));
+	if (!(head -> stash))
+		special_free(NULL, &head, &lst);
 	free(buffer);
 	return (line);
 }

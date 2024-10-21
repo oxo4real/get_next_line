@@ -18,7 +18,7 @@ size_t	ft_strlen(const char *s)
 
 	i = 0;
 	while (s[i])
-		i++;	
+		i++;
 	return (i);
 }
 
@@ -26,7 +26,7 @@ char	*ft_strdup(const char *s)
 {
 	char	*dup;
 	int		i;
-	
+
 	dup = malloc(sizeof(char) * ft_strlen(s) + 1);
 	if (!dup)
 		return (NULL);
@@ -46,7 +46,7 @@ char	*custom_strjoin(char *s1, char *s2)
 	size_t		i;
 	size_t		j;
 	char		*rendu;
-	
+
 	size = ft_strlen(s1) + ft_strlen(s2) + 1;
 	rendu = (char *) malloc(size);
 	if (!rendu)
@@ -71,7 +71,7 @@ char	*custom_strjoin(char *s1, char *s2)
 
 int	find_chr(char *str, char c)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])

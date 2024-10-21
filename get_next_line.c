@@ -71,7 +71,7 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 	char	*new_stash;
 	int		read_return;
 
-	while(1)
+	while (1)
 	{
 		read_return = read(fd, buffer, BUFFER_SIZE);
 		if (read_return < 0)
@@ -84,7 +84,7 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 			return (NULL);
 		(*stash) = new_stash;
 		if (find_chr((*stash), '\n') >= 0)
-			break;
+			break ;
 	}
 	return (dup_stash_till_nl(stash));
 }

@@ -92,7 +92,7 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 
 char	*get_next_line(int fd)
 {
-	static char	*map[OPEN_MAX + 1] = {0};
+	static char	*map[OPEN_MAX] = {0};
 	char		*buffer;
 	char		*line;
 

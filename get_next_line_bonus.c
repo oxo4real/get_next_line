@@ -12,6 +12,7 @@
 
 #include "get_next_line_bonus.h"
 
+// frees the stash or the buffer or both
 void	*special_free(char *buffer, char **stash)
 {
 	if (buffer)
@@ -24,6 +25,9 @@ void	*special_free(char *buffer, char **stash)
 	return (NULL);
 }
 
+/* duplicates the stash until it finds a '\n' or '\0'
+then it returns it and removes what ever it copied
+from the stash */
 char	*dup_stash_till_nl(char **stash)
 {
 	int		i;
@@ -52,6 +56,9 @@ char	*dup_stash_till_nl(char **stash)
 	return (rendu);
 }
 
+/* if there is '\n' in the stash we dup till next line
+if not then this is the last line we are going to copy
+so we dup and the we free the stash */
 char	*handle_eof(char **stash, char *line)
 {
 	if ((*stash)[0] == 0)
@@ -67,6 +74,7 @@ char	*handle_eof(char **stash, char *line)
 	return (line);
 }
 
+// it reads the line and hadles it depending on the case
 char	*read_line(int fd, char *line, char *buffer, char **stash)
 {
 	char	*new_stash;
@@ -90,6 +98,7 @@ char	*read_line(int fd, char *line, char *buffer, char **stash)
 	return (dup_stash_till_nl(stash));
 }
 
+// my get_next_line
 char	*get_next_line(int fd)
 {
 	static char	*map[OPEN_MAX] = {0};

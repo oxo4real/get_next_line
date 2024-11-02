@@ -40,6 +40,7 @@ char	*ft_strdup(const char *s)
 	return (dup);
 }
 
+// the only difference is that it frees s1 if everything was syccessful
 char	*custom_strjoin(char *s1, char *s2)
 {
 	int			size;

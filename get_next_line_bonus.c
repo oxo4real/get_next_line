@@ -96,7 +96,7 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	char		*line;
 
-	if (BUFFER_SIZE <= 0 || fd > OPEN_MAX || fd < 0)
+	if (BUFFER_SIZE <= 0 || fd >= OPEN_MAX || fd < 0)
 		return (NULL);
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
